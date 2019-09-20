@@ -23,7 +23,7 @@ node {
 
 
     stage('Run App'){
-        runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
+        runApp(CONTAINER_NAME, CONTAINER_TAG, HTTP_PORT)
     }
 
 }
@@ -47,8 +47,7 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword){
     echo "Image push complete"
 }
 
-def runApp(containerName, tag, dockerHubUser, httpPort){
-    sh "docker pull $dockerHubUser/$containerName"
+def runApp(containerName, tag, httpPort){
     sh "docker run -d --rm -p 80:$httpPort --name $containerName $containerName:$tag"
     echo "Application started on port: ${httpPort} (http)"
 }
