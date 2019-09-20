@@ -8,9 +8,9 @@ node {
         env.PATH = "${dockerHome}/bin:${env.PATH}"
     }
 
-/*    stage('Checkout') {
+    stage('Checkout') {
         checkout scm
-    } */
+    }
 
     stage("Image Prune"){
         imagePrune(IMAGE_NAME)
