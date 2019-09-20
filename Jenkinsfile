@@ -1,7 +1,5 @@
-def CONTAINER_NAME="sample-flask-app"
-def CONTAINER_TAG="latest"
-def HTTP_PORT="3031"
-def HOST_PORT="3456"
+def IMAGE_NAME="sample-flask-app"
+def IMAGE_TAG="latest"
 
 node {
 
@@ -10,21 +8,22 @@ node {
         env.PATH = "${dockerHome}/bin:${env.PATH}"
     }
 
-    stage('Checkout') {
-        checkout scm
-    }
+#    stage('Checkout') {
+#        checkout scm
+#    }
 
     stage("Image Prune"){
-        imagePrune(CONTAINER_NAME)
+        imagePrune(IMAGE_NAME)
     }
 
     stage('Image Build'){
-        imageBuild(CONTAINER_NAME, CONTAINER_TAG)
+        imageBuild(IMAGE_NAME, IMAGE_TAG)
     }
 
 
     stage('Run App'){
-        runApp(CONTAINER_NAME, CONTAINER_TAG, HTTP_PORT, HOST_PORT)
+        sh "docker-compose -f docker-compose.yml up -d --build"
+        echo "Application started Successfully!"
     }
 
 }
@@ -36,19 +35,7 @@ def imagePrune(containerName){
     } catch(error){}
 }
 
-def imageBuild(containerName, tag){
-    sh "docker build -t $containerName:$tag  -t $containerName --pull --no-cache ."
+def imageBuild(imageName, tag){
+    sh "docker build -t $imageName:$tag  -t $imageName --pull --no-cache ."
     echo "Image build complete"
-}
-
-def pushToImage(containerName, tag, dockerUser, dockerPassword){
-    sh "docker login -u $dockerUser -p $dockerPassword"
-    sh "docker tag $containerName:$tag $dockerUser/$containerName:$tag"
-    sh "docker push $dockerUser/$containerName:$tag"
-    echo "Image push complete"
-}
-
-def runApp(containerName, tag, httpPort, hostPort){
-    sh "docker run -d --rm -p $hostPort:$httpPort --name $containerName $containerName:$tag"
-    echo "Application started on port: ${hostPort} (http)"
 }

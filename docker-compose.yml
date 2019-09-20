@@ -1,0 +1,23 @@
+version: '3.2'
+
+services:
+  sample_flask_app:
+    image: sample-flask-app:latest
+    container_name: sample_flask_app
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://0.0.0.0:5514"
+        mode: non-blocking
+        max-buffer-size: 10m
+        tag: "{{.Name}}"
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "3456:3031"
+    networks:
+      - jenkins
+
+networks:
+  jenkins:
