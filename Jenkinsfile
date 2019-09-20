@@ -1,6 +1,7 @@
 def CONTAINER_NAME="sample-flask-app"
 def CONTAINER_TAG="latest"
 def HTTP_PORT="3031"
+def HOST_PORT="3456"
 
 node {
 
@@ -23,7 +24,7 @@ node {
 
 
     stage('Run App'){
-        runApp(CONTAINER_NAME, CONTAINER_TAG, HTTP_PORT)
+        runApp(CONTAINER_NAME, CONTAINER_TAG, HTTP_PORT, HOST_PORT)
     }
 
 }
@@ -47,7 +48,7 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword){
     echo "Image push complete"
 }
 
-def runApp(containerName, tag, httpPort){
-    sh "docker run -d --rm -p 80:$httpPort --name $containerName $containerName:$tag"
-    echo "Application started on port: ${httpPort} (http)"
+def runApp(containerName, tag, httpPort, hostPort){
+    sh "docker run -d --rm -p $hostPort:$httpPort --name $containerName $containerName:$tag"
+    echo "Application started on port: ${hostPort} (http)"
 }
